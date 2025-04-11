@@ -22,4 +22,4 @@ app.use('/api', movieRoutes);
 
 app.use(handleError);
 
-app.listen(PORT, () => console.log(`Server listening on ${SERVER_URL}`))
+app.listen(PORT, '0.0.0.0', () => console.log(`Server listening on ${SERVER_URL}`))
