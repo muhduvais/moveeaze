@@ -45,6 +45,7 @@ const addFavoriteMovie = async (movie: any) => {
         fs.writeFileSync(FAVORITES_FILE, JSON.stringify(data, null, 2));
         return 'Movie added to favorites';
     } catch (err) {
+	console.log('Error adding to favorites: ', err);
         throw new Error('Failed to add to favorites');
     }
 };

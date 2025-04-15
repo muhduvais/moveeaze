@@ -28,6 +28,18 @@ const getMovieDetails = (title) => __awaiter(void 0, void 0, void 0, function* (
         throw new Error('Error fetching the movie details');
     }
 });
+const checkIfFavorite = (imdbID) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const favorites = fs_1.default.existsSync(FAVORITES_FILE)
+            ? JSON.parse(fs_1.default.readFileSync(FAVORITES_FILE, 'utf-8'))
+            : [];
+        const exists = favorites.filter((item) => item.imdbID === imdbID);
+        return exists.length !== 0;
+    }
+    catch (error) {
+        throw new Error('Error fetching the movie details');
+    }
+});
 const addFavoriteMovie = (movie) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = fs_1.default.existsSync(FAVORITES_FILE)
@@ -41,6 +53,7 @@ const addFavoriteMovie = (movie) => __awaiter(void 0, void 0, void 0, function* 
         return 'Movie added to favorites';
     }
     catch (err) {
+        console.log('Error adding to favorites: ', err);
         throw new Error('Failed to add to favorites');
     }
 });
@@ -57,12 +70,13 @@ const removeFavoriteMovie = (imdbID) => __awaiter(void 0, void 0, void 0, functi
         throw new Error('Failed to remove from favorites');
     }
 });
-const fetchFavorites = () => __awaiter(void 0, void 0, void 0, function* () {
+const fetchFavorites = (skip, limit) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const data = fs_1.default.existsSync(FAVORITES_FILE)
             ? JSON.parse(fs_1.default.readFileSync(FAVORITES_FILE, 'utf-8'))
             : [];
-        return data;
+        const paginatedData = data.reverse().slice(skip, skip + limit);
+        return { paginatedData, totalItems: data.length };
     }
     catch (err) {
         throw new Error('Failed to fetch favorites');
@@ -70,6 +84,7 @@ const fetchFavorites = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.default = {
     getMovieDetails,
+    checkIfFavorite,
     addFavoriteMovie,
     removeFavoriteMovie,
     fetchFavorites,

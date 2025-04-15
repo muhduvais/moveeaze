@@ -17,13 +17,14 @@ const fetchMovieDetails = (req, res) => __awaiter(void 0, void 0, void 0, functi
     try {
         const title = req.params.title;
         if (!title)
-            return res.status(400).json({ message: 'Title is required!' });
+            res.status(400).json({ message: 'Title is required!' });
         const movieDetails = yield movie_service_1.default.getMovieDetails(title);
-        return res.status(200).json({ movieDetails });
+        const isFavorite = yield movie_service_1.default.checkIfFavorite(movieDetails.imdbID);
+        res.status(200).json({ movieDetails, isFavorite });
     }
     catch (error) {
         console.log('Error fetching movie details: ', error);
-        return res.status(500).json({ message: 'Failed to fetch movie details' });
+        res.status(500).json({ message: 'Failed to fetch movie details' });
     }
 });
 const addFavoriteMovie = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -33,6 +34,7 @@ const addFavoriteMovie = (req, res) => __awaiter(void 0, void 0, void 0, functio
         res.status(201).json({ message: result });
     }
     catch (err) {
+        console.log('Error adding to favorites: ', err);
         res.status(500).json({ message: 'Failed to add to favorites' });
     }
 });
@@ -48,8 +50,16 @@ const removeFavoriteMovie = (req, res) => __awaiter(void 0, void 0, void 0, func
 });
 const fetchFavorites = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const favorites = yield movie_service_1.default.fetchFavorites();
-        res.status(200).json({ favorites });
+        const page = Number(req.query.page) || 1;
+        const limit = 4;
+        const skip = (page - 1) * limit;
+        const { paginatedData, totalItems } = yield movie_service_1.default.fetchFavorites(skip, limit);
+        res.status(200).json({
+            favorites: paginatedData,
+            totalPages: Math.ceil(totalItems / limit),
+            currentPage: page,
+            totalItems,
+        });
     }
     catch (err) {
         res.status(500).json({ message: 'Failed to fetch favorites' });

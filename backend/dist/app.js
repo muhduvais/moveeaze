@@ -15,8 +15,9 @@ const CLIENT_URL = process.env.CLIENT_URL;
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)({
     origin: CLIENT_URL,
+    credentials: true
 }));
 app.use(express_1.default.json());
-app.use('/', movie_routes_1.default);
+app.use('/api', movie_routes_1.default);
 app.use(error_middleware_1.handleError);
-app.listen(PORT, () => console.log(`Server listening on ${SERVER_URL}`));
+app.listen(PORT, '0.0.0.0', () => console.log(`Server listening on ${SERVER_URL}`));

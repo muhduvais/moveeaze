@@ -22,6 +22,7 @@ const addFavoriteMovie = async (req: Request, res: Response): Promise<void> => {
         const result = await movieService.addFavoriteMovie(movie);
         res.status(201).json({ message: result });
     } catch (err) {
+	console.log('Error adding to favorites: ', err);
         res.status(500).json({ message: 'Failed to add to favorites' });
     }
 };
