@@ -1,80 +1,90 @@
 import axios from 'axios';
-import dotenv from 'dotenv';
-import fs from 'fs';
-import path from 'path';
 import { IMovieDetails } from '../interfaces/movie.interface';
+import Favorite from '../models/favorite.model';
+import { AppError } from '../utils/appError';
+import dotenv from 'dotenv';
 dotenv.config();
 
 const API_URL = process.env.API_URL;
-const FAVORITES_FILE = path.join(__dirname, '../public/favorites.json');
 
-const getMovieDetails = async (title: string) => {
+const getMovieDetails = async (title: string): Promise<IMovieDetails | null> => {
     try {
         const response = await axios.get(`${API_URL}&t=${title}`);
-        return response.data;
-    } catch (error) {
-        throw new Error('Error fetching the movie details');
-    }
-};
-
-const checkIfFavorite = async (imdbID: string) => {
-    try {
-        const favorites = fs.existsSync(FAVORITES_FILE)
-            ? JSON.parse(fs.readFileSync(FAVORITES_FILE, 'utf-8'))
-            : [];
-
-        const exists = favorites.filter((item: IMovieDetails) => item.imdbID === imdbID);
-
-        return exists.length !== 0;
-    } catch (error) {
-        throw new Error('Error fetching the movie details');
-    }
-};
-
-const addFavoriteMovie = async (movie: any) => {
-    try {
-        const data = fs.existsSync(FAVORITES_FILE)
-            ? JSON.parse(fs.readFileSync(FAVORITES_FILE, 'utf-8'))
-            : [];
-
-        if (data.find((fav: any) => fav.imdbID === movie.imdbID)) {
-            throw new Error('Movie already in favorites');
+        
+        if (response.data.Response === 'False') {
+            return null;
         }
+        
+        return response.data;
+    } catch (error: any) {
+        console.log('Error: ', error)
+        if (error instanceof AppError) throw error;
+        throw new AppError('Failed to fetch movie details', 500);
+    }
+};
 
-        data.push(movie);
-        fs.writeFileSync(FAVORITES_FILE, JSON.stringify(data, null, 2));
+const checkIfFavorite = async (imdbID: string, userId: string): Promise<boolean> => {
+    try {
+        const favorite = await Favorite.findOne({ imdbID, userId });
+        return !!favorite;
+    } catch (error) {
+        throw new AppError('Failed to check favorite status', 500);
+    }
+};
+
+const addFavoriteMovie = async (imdbID: string, userId: string): Promise<string> => {
+    try {
+        const existingFavorite = await Favorite.findOne({ imdbID, userId });
+        
+        if (existingFavorite) {
+            throw new AppError('Movie is already in favorites', 400);
+        }
+        
+        await Favorite.create({ imdbID, userId });
         return 'Movie added to favorites';
-    } catch (err) {
-	console.log('Error adding to favorites: ', err);
-        throw new Error('Failed to add to favorites');
+    } catch (error: any) {
+        if (error instanceof AppError) throw error;
+        if (error.code === 11000) {
+            throw new AppError('Movie is already in favorites', 400);
+        }
+        throw new AppError('Failed to add movie to favorites', 500);
     }
 };
 
-const removeFavoriteMovie = async (imdbID: string) => {
+const removeFavoriteMovie = async (imdbID: string, userId: string): Promise<boolean> => {
     try {
-        const data = fs.existsSync(FAVORITES_FILE)
-            ? JSON.parse(fs.readFileSync(FAVORITES_FILE, 'utf-8'))
-            : [];
-
-        const filtered = data.filter((movie: any) => movie.imdbID !== imdbID);
-        fs.writeFileSync(FAVORITES_FILE, JSON.stringify(filtered, null, 2));
-        return 'Removed from favorites';
-    } catch (err) {
-        throw new Error('Failed to remove from favorites');
+        const result = await Favorite.findOneAndDelete({ imdbID, userId });
+        
+        if (!result) {
+            throw new AppError('Movie not found in favorites', 404);
+        }
+        
+        return true;
+    } catch (error: any) {
+        if (error instanceof AppError) throw error;
+        throw new AppError('Failed to remove movie from favorites', 500);
     }
 };
 
-const fetchFavorites = async (skip: number, limit: number) => {
+const fetchFavorites = async (userId: string, skip: number, limit: number) => {
     try {
-        const data = fs.existsSync(FAVORITES_FILE)
-            ? JSON.parse(fs.readFileSync(FAVORITES_FILE, 'utf-8'))
-            : [];
-
-        const paginatedData = data.reverse().slice(skip, skip + limit)
-
-        return { paginatedData, totalItems: data.length };
-    } catch (err) {
-        throw new Error('Failed to fetch favorites');
+        const favorites = await Favorite.find({ userId })
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
+        
+        const totalItems = await Favorite.countDocuments({ userId });
+        
+        const movieDetails = await Promise.all(
+            favorites.map(async (favorite) => {
+                const response = await axios.get(`${API_URL}&i=${favorite.imdbID}`);
+                return response.data;
+            })
+        );
+        
+        return { favorites: movieDetails, totalItems };
+    } catch (error) {
+        throw new AppError('Failed to fetch favorites', 500);
     }
 };
 
@@ -83,7 +93,7 @@ export default {
     checkIfFavorite,
     addFavoriteMovie,
     removeFavoriteMovie,
-    fetchFavorites,
+    fetchFavorites
 };
 
 // Example response

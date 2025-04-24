@@ -1,62 +1,93 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import movieService from '../services/movie.service';
+import { catchAsync } from '../utils/catchAsync';
+import { AppError } from '../utils/appError';
+import { IUser } from '../models/user.model';
 
-const fetchMovieDetails = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const title = req.params.title as string;
-        if (!title) res.status(400).json({ message: 'Title is required!' });
 
-        const movieDetails = await movieService.getMovieDetails(title);
-        const isFavorite = await movieService.checkIfFavorite(movieDetails.imdbID);
+const fetchMovieDetails = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { title } = req.params;
 
-        res.status(200).json({ movieDetails, isFavorite });
-    } catch (error) {
-        console.log('Error fetching movie details: ', error);
-        res.status(500).json({ message: 'Failed to fetch movie details' });
+    if (!title) {
+        return next(new AppError('Title is required', 400));
     }
-};
 
-const addFavoriteMovie = async (req: Request, res: Response): Promise<void> => {
-    const movie = req.body;
-    try {
-        const result = await movieService.addFavoriteMovie(movie);
-        res.status(201).json({ message: result });
-    } catch (err) {
-	console.log('Error adding to favorites: ', err);
-        res.status(500).json({ message: 'Failed to add to favorites' });
+    const movieDetails = await movieService.getMovieDetails(title);
+
+    let isFavorite = false;
+
+    if (req.user) {
+        isFavorite = await movieService.checkIfFavorite(movieDetails.imdbID, req.user._id);
     }
-};
 
-const removeFavoriteMovie = async (req: Request, res: Response): Promise<void> => {
-    const imdbID = req.params.imdbID;
-    try {
-        const result = await movieService.removeFavoriteMovie(imdbID);
-        res.status(200).json({ message: result });
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to remove from favorites' });
+    res.status(200).json({
+        status: 'success',
+        movieDetails,
+        isFavorite
+    });
+});
+
+const addFavoriteMovie = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { imdbID } = req.body;
+
+    if (!imdbID) {
+        return next(new AppError('IMDB ID is required', 400));
     }
-};
 
-const fetchFavorites = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const page = Number(req.query.page) || 1;
-        const limit = 4;
-        const skip = (page - 1) * limit;
-        const { paginatedData, totalItems } = await movieService.fetchFavorites(skip, limit);
-        res.status(200).json({
-            favorites: paginatedData,
+    if (!req.user) {
+        return next(new AppError('Authentication required', 401));
+    }
+
+    const message = await movieService.addFavoriteMovie(imdbID, req.user._id);
+
+    res.status(201).json({
+        status: 'success',
+        message
+    });
+});
+
+const removeFavoriteMovie = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const { imdbID } = req.params;
+
+    const user = (req as { user?: IUser }).user;
+
+    if (!user) {
+        return next(new AppError('Authentication required', 401));
+    }
+
+    await movieService.removeFavoriteMovie(imdbID, user._id);
+
+    res.status(200).json({
+        status: 'success',
+        message: 'Movie removed from favorites'
+    });
+});
+
+const fetchFavorites = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.user) {
+        return next(new AppError('Authentication required', 401));
+    }
+
+    const page = Number(req.query.page) || 1;
+    const limit = 4;
+    const skip = (page - 1) * limit;
+
+    const { favorites, totalItems } = await movieService.fetchFavorites(req.user._id, skip, limit);
+
+    res.status(200).json({
+        status: 'success',
+        data: {
+            favorites,
             totalPages: Math.ceil(totalItems / limit),
             currentPage: page,
-            totalItems,
-        });
-    } catch (err) {
-        res.status(500).json({ message: 'Failed to fetch favorites' });
-    }
-};
+            totalItems
+        }
+    });
+});
 
 export default {
     fetchMovieDetails,
     addFavoriteMovie,
     removeFavoriteMovie,
-    fetchFavorites,
+    fetchFavorites
 };
