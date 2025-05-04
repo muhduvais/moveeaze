@@ -31,7 +31,7 @@ const Navbar: React.FC = () => {
             
             <div className="flex items-center">
               <Link to="/" className="text-xl font-bold text-yellow-500">
-                MovieEaze
+                Move<span className='text-gray-300'>Eaze</span>
               </Link>
             </div>
             
