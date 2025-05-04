@@ -18,6 +18,7 @@ export class AuthController implements IAuthController {
             const result = await this.signupUser.execute(req.body);
             res.status(201).json({ status: 'success', ...result });
         } catch (err) {
+            console.log('signup error: ', err)
             next(err);
         }
     }

@@ -7,10 +7,10 @@ const authRouter = Router();
 
 const authController = container.resolve<IAuthController>("IAuthController");
 
-authRouter.post('/signup', authController.signup);
-authRouter.post('/login', authController.login);
+authRouter.post('/signup', authController.signup.bind(authController));
+authRouter.post('/login', authController.login.bind(authController));
 
 authRouter.use(protect);
-authRouter.get('/me', authController.getCurrentUser);
+authRouter.get('/me', authController.getCurrentUser.bind(authController));
 
 export default authRouter;

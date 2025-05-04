@@ -24,7 +24,7 @@ const sendErrorProd = (err: AppError, res: Response) => {
             message: err.message,
         });
     } else {
-        console.error('ERROR 💥', err);
+        console.error('Error: ', err);
         res.status(500).json({
             status: 'error',
             message: 'Something went very wrong!',
@@ -39,7 +39,8 @@ export const handleError = (err: any, req: Request, res: Response, next: NextFun
     if (process.env.NODE_ENV === 'development') {
         sendErrorDev(err, res);
     } else {
-        let error = { ...err, message: err.message };
+        let error = Object.create(err);
+        error.message = err.message;
 
         if (error.name === 'CastError') error = handleCastErrorDB(error);
         if (error.code === 11000) error = handleDuplicateFieldsDB(error);
@@ -50,3 +51,4 @@ export const handleError = (err: any, req: Request, res: Response, next: NextFun
         sendErrorProd(error, res);
     }
 };
+

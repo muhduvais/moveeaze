@@ -1,0 +1,46 @@
+.
+├── eslint.config.js
+├── frontend-structure.txt
+├── index.html
+├── package.json
+├── package-lock.json
+├── public
+│   └── vite.svg
+├── README.md
+├── src
+│   ├── api
+│   │   └── axiosInstance.ts
+│   ├── App.css
+│   ├── App.tsx
+│   ├── assets
+│   │   ├── IMDB_Logo_2016.svg.png
+│   │   ├── Metacritic_logo.svg.png
+│   │   ├── react.svg
+│   │   └── Rotten_Tomatoes_logo.svg.png
+│   ├── components
+│   │   ├── Navbar.tsx
+│   │   └── ProtectedRoute.tsx
+│   ├── contexts
+│   │   ├── AuthContext.tsx
+│   │   └── TabContext.tsx
+│   ├── domain
+│   │   ├── models
+│   │   ├── services
+│   │   └── useCases
+│   ├── index.css
+│   ├── interfaces
+│   │   └── movieInterfaces.tsx
+│   ├── main.tsx
+│   ├── pages
+│   │   ├── Favorites.tsx
+│   │   ├── Login.tsx
+│   │   ├── Search.tsx
+│   │   └── Signup.tsx
+│   └── vite-env.d.ts
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+├── vercel.json
+└── vite.config.ts
+
+13 directories, 31 files

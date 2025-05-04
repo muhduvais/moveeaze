@@ -8,7 +8,6 @@ import { IJwtService } from '../../../domain/services/IJwtService';
 export class LoginUser implements ILoginUser {
     constructor(
         @inject("IJwtService") private jwtService: IJwtService
-
     ) { }
 
     async execute({ email, password }: { email: string; password: string }): Promise<{ token: string; user: any }> {

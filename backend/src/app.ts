@@ -1,14 +1,13 @@
 import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import morgan from 'morgan';
 import { connectDB } from './config/database';
+import dotenv from 'dotenv';
+dotenv.config();
 import movieRoutes from './interfaces/routes/movie-routes';
 import authRoutes from './interfaces/routes/auth-routes';
 import { handleError } from './interfaces/middlewares/error-middleware';
-
-dotenv.config();
 
 connectDB();
 
@@ -31,6 +30,10 @@ app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/movies', movieRoutes);
+
+app.use((req, res, next) => {
+    res.status(404).json({ status: 'fail', message: 'Route not found' });
+});
 
 app.use(handleError);
 

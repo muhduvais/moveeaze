@@ -1,5 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axiosInstance from '../api/axiosInstance';
+import { loginApi, signupApi, getCurrentUserApi } from '../services/auth-service';
+import axiosInstance from '../infrastructure/apiClient/axiosInstance';
+
 
 interface User {
   _id: string;
@@ -56,7 +58,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchUserData = async () => {
     try {
-      const response = await axiosInstance.get('/api/auth/me');
+      const response = await getCurrentUserApi();
       const responseData: any = response.data;
       setUser(responseData.data.user);
     } catch (err) {
@@ -70,13 +72,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
     
     try {
-      const response: any = await axiosInstance.post('/api/auth/login', { email, password });
+      const response: any = await loginApi(email, password);
       
-      const { token, data } = response.data;
+      const { token, user } = response.data;
       
       localStorage.setItem('token', token);
       setToken(token);
-      setUser(data.user);
+      setUser(user);
       setIsAuthenticated(true);
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || 'Login failed. Please try again.';
@@ -91,15 +93,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
     
     try {
-      const response: any = await axiosInstance.post('/api/auth/signup', { name, email, password });
+      const response: any = await signupApi(name, email, password);
       
-      const { token, data } = response.data;
+      const { token, user } = response.data;
       
       localStorage.setItem('token', token);
       setToken(token);
-      setUser(data.user);
+      setUser(user);
       setIsAuthenticated(true);
     } catch (err: any) {
+      console.log('Error: ',err)
       const errorMessage = err.response?.data?.message || 'Signup failed. Please try again.';
       setError(errorMessage);
     } finally {

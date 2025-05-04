@@ -1,5 +1,5 @@
 import { IMovieDetails } from "../../entities/IMovie";
 
 export interface IGetFavoriteMovies {
-    execute(userId: string): Promise<IMovieDetails[]>;
+    execute(userId: string, skip: number, limit: number): Promise<any>;
 }

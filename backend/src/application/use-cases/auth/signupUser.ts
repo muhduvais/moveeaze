@@ -17,6 +17,8 @@ export class SignupUser implements ISignupUser {
         const newUser = await User.create({ name, email, password });
         newUser.password = undefined;
 
+        console.log('new user: ', newUser)
+
         const token = this.jwtService.sign({ id: newUser._id });
 
         return { token, user: newUser };

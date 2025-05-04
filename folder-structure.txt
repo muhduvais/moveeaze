@@ -1,0 +1,128 @@
+.
+├── backend
+│   ├── env.d.ts
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── src
+│   │   ├── application
+│   │   │   └── use-cases
+│   │   │       ├── auth
+│   │   │       │   ├── getCurrentUser.ts
+│   │   │       │   ├── loginUser.ts
+│   │   │       │   └── signupUser.ts
+│   │   │       ├── favorites
+│   │   │       │   ├── addFavoriteMovie.ts
+│   │   │       │   ├── getFavoriteMovies.ts
+│   │   │       │   └── removeFavoriteMovie.ts
+│   │   │       └── search
+│   │   │           └── searchMovie.ts
+│   │   ├── app.ts
+│   │   ├── config
+│   │   │   └── database.ts
+│   │   ├── domain
+│   │   │   ├── controllers
+│   │   │   │   ├── IAuthController.ts
+│   │   │   │   └── IMovieController.ts
+│   │   │   ├── entities
+│   │   │   │   ├── IMovie.ts
+│   │   │   │   ├── IUser.ts
+│   │   │   │   └── rating.ts
+│   │   │   ├── repositories
+│   │   │   │   ├── IBaseRepository.ts
+│   │   │   │   └── IMovieRepository.ts
+│   │   │   ├── services
+│   │   │   │   ├── IJwtService.ts
+│   │   │   │   └── IMovieDataProvider.ts
+│   │   │   └── use-cases
+│   │   │       ├── auth
+│   │   │       │   ├── IGetCurrentUser.ts
+│   │   │       │   ├── ILoginUser.ts
+│   │   │       │   └── ISignupUser.ts
+│   │   │       ├── favorites
+│   │   │       │   ├── IAddFavoriteMovie.ts
+│   │   │       │   ├── IGetFavoriteMovies.ts
+│   │   │       │   └── IRemoveFavoriteMovie.ts
+│   │   │       └── search
+│   │   │           └── ISearchMovie.ts
+│   │   ├── infrastructure
+│   │   │   ├── config
+│   │   │   │   └── container.ts
+│   │   │   ├── database
+│   │   │   │   ├── models
+│   │   │   │   │   ├── favoriteMovie-Model.ts
+│   │   │   │   │   └── user-model.ts
+│   │   │   │   └── repositories
+│   │   │   │       ├── baseRepository.ts
+│   │   │   │       └── movieRepository.ts
+│   │   │   └── services
+│   │   │       └── omdbApi-service.ts
+│   │   ├── interfaces
+│   │   │   ├── controllers
+│   │   │   │   ├── auth-controller.ts
+│   │   │   │   └── movie-controller.ts
+│   │   │   ├── middlewares
+│   │   │   │   ├── auth-middleware.ts
+│   │   │   │   ├── error-middleware.ts
+│   │   │   │   └── error-utils.ts
+│   │   │   └── routes
+│   │   │       ├── auth-routes.ts
+│   │   │       └── movie-routes.ts
+│   │   ├── shared
+│   │   │   ├── errors
+│   │   │   │   └── appError.ts
+│   │   │   ├── services
+│   │   │   │   └── jwtService.ts
+│   │   │   └── utils
+│   │   │       └── catchAsync.ts
+│   │   └── types
+│   │       └── express
+│   │           └── index.d.ts
+│   └── tsconfig.json
+├── folder-structure.js
+├── folder-structure.txt
+├── frontend
+│   ├── eslint.config.js
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── public
+│   │   └── vite.svg
+│   ├── README.md
+│   ├── src
+│   │   ├── api
+│   │   │   └── axiosInstance.ts
+│   │   ├── App.css
+│   │   ├── App.tsx
+│   │   ├── assets
+│   │   │   ├── IMDB_Logo_2016.svg.png
+│   │   │   ├── Metacritic_logo.svg.png
+│   │   │   ├── react.svg
+│   │   │   └── Rotten_Tomatoes_logo.svg.png
+│   │   ├── components
+│   │   │   ├── Navbar.tsx
+│   │   │   └── ProtectedRoute.tsx
+│   │   ├── contexts
+│   │   │   ├── AuthContext.tsx
+│   │   │   └── TabContext.tsx
+│   │   ├── domain
+│   │   │   ├── models
+│   │   │   ├── services
+│   │   │   └── useCases
+│   │   ├── index.css
+│   │   ├── interfaces
+│   │   │   └── movieInterfaces.tsx
+│   │   ├── main.tsx
+│   │   ├── pages
+│   │   │   ├── Favorites.tsx
+│   │   │   ├── Login.tsx
+│   │   │   ├── Search.tsx
+│   │   │   └── Signup.tsx
+│   │   └── vite-env.d.ts
+│   ├── tsconfig.app.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   ├── vercel.json
+│   └── vite.config.ts
+└── README.md
+
+47 directories, 79 files

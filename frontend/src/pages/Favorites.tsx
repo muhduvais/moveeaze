@@ -1,147 +1,27 @@
-import { useState, useEffect } from 'react';
-import axios from '../api/axiosInstance';
-import { SiRottentomatoes } from 'react-icons/si';
-import { SiMetacritic } from 'react-icons/si';
-import { FaImdb } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
-import { toast } from 'sonner';
+import Ratings from '../components/Ratings';
+import { useFavorite } from '../hooks/useFavorite';
+import { useEffect } from 'react';
 import { useTab } from '../contexts/TabContext';
-import { useAuth } from '../contexts/AuthContext';
-
-interface IRating {
-  Source: string;
-  Value: string;
-}
-
-interface IMovie {
-  Title: string;
-  Year: string;
-  Rated: string;
-  Released: string;
-  Runtime: string;
-  Genre: string;
-  Director: string;
-  Writer: string;
-  Actors: string;
-  Plot: string;
-  Language: string;
-  Country: string;
-  Awards: string;
-  Poster: string;
-  Ratings: IRating[];
-  Metascore: string;
-  imdbRating: string;
-  imdbVotes: string;
-  imdbID: string;
-  Type: string;
-  DVD: string;
-  BoxOffice: string;
-  Production: string;
-  Website: string;
-  Response: string;
-}
-
-interface IFavoritesResponse {
-  status: string;
-  data: {
-    favorites: IMovie[];
-    totalPages: number;
-    currentPage: number;
-    totalItems: number;
-  };
-}
+import Pagination from '../components/Pagination';
 
 const Favorites = () => {
-  const [favorites, setFavorites] = useState<IMovie[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalPages, setTotalPages] = useState<number>(1);
-  const [totalItems, setTotalItems] = useState<number>(0);
 
   const { setCurrentTab } = useTab();
-  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     setCurrentTab('favorites');
   }, []);
 
-  const fetchFavorites = async (page: number = 1) => {
-    if (!isAuthenticated) return;
-    
-    setLoading(true);
-    try {
-      const response = await axios.get<IFavoritesResponse>(`/api/movies/favorites?page=${page}`);
-      setFavorites(response.data.data.favorites);
-      setTotalPages(response.data.data.totalPages);
-      setCurrentPage(response.data.data.currentPage);
-      setTotalItems(response.data.data.totalItems);
-    } catch (err) {
-      console.error('Error fetching favorites:', err);
-      toast.error('Failed to load favorites');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchFavorites(currentPage);
-  }, [currentPage, isAuthenticated]);
-
-  const removeFromFavorites = async (movieId: string) => {
-    try {
-      setFavorites(prevFavorites => prevFavorites.filter(movie => movie.imdbID !== movieId));
-      
-      await axios.delete(`/api/movies/favorites/${movieId}`);
-      toast.success('Movie removed from favorites!');
-      
-      // If last movie on the page was removed and it's not the first page, go to previous page
-      if (favorites.length === 1 && currentPage > 1) {
-        setCurrentPage(prev => prev - 1);
-      } else if (favorites.length === 1) {
-        // If it was the last movie on the first page, refresh to show empty state
-        fetchFavorites(1);
-      }
-    } catch (err) {
-      console.error('Error removing from favorites:', err);
-      toast.error('Failed to remove movie from favorites');
-      // Restore the state by refetching
-      fetchFavorites(currentPage);
-    }
-  };
-
-  const renderRatings = (ratings: IRating[] | undefined) => {
-    if (!ratings || ratings.length === 0) return null;
-
-    return (
-      <div className="flex flex-wrap gap-2 mb-4">
-        {ratings.map((rating, index) => {
-          return (
-            <div
-              key={index}
-              className="px-3 py-1 rounded-lg text-white text-sm font-medium flex items-center gap-1"
-            >
-              {rating.Source === "Internet Movie Database" ? (
-                <div className='flex items-center justify-center gap-2'>
-                  <FaImdb className="text-yellow-500" />
-                  <span>{rating.Value}</span>
-                </div>
-              ) : rating.Source === "Rotten Tomatoes" ? (
-                <div className='flex items-center justify-center gap-2'>
-                  <SiRottentomatoes className="text-red-500" />
-                  <span>{rating.Value}</span>
-                </div>
-              ) : (
-                <div className='flex items-center justify-center gap-2'>
-                  <SiMetacritic className="text-yellow-500" />
-                  <span>{rating.Value}</span>
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    );
-  };
+  const {
+    favorites,
+    loading,
+    currentPage,
+    totalPages,
+    totalItems,
+    setCurrentPage,
+    removeFromFavorites,
+  } = useFavorite();
 
   return (
     <div className='overflow-y-auto scrollbar-hide'>
@@ -221,7 +101,7 @@ const Favorites = () => {
                       <p className="text-gray-300 mb-4 italic text-start">{movie.Plot}</p>
                     )}
 
-                    {renderRatings(movie.Ratings)}
+                    {Ratings(movie.Ratings)}
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2 text-gray-300 mb-6 text-start">
                       {movie.Director && movie.Director !== "N/A" && (
@@ -270,30 +150,12 @@ const Favorites = () => {
             ))}
           </div>
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex justify-center mt-8 mb-4 gap-2">
-              <button
-                onClick={() => setCurrentPage(curr => Math.max(curr - 1, 1))}
-                disabled={currentPage === 1}
-                className={`px-4 py-1 rounded-md ${currentPage === 1 ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-700 text-white hover:bg-gray-600 cursor-pointer'}`}
-              >
-                Previous
-              </button>
-
-              <div className="flex items-center px-4 text-gray-300">
-                Page {currentPage} of {totalPages}
-              </div>
-
-              <button
-                onClick={() => setCurrentPage(curr => Math.min(curr + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className={`px-4 py-1 rounded-md ${currentPage === totalPages ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-700 text-white hover:bg-gray-600 cursor-pointer'}`}
-              >
-                Next
-              </button>
-            </div>
-          )}
+          {totalPages > 1 &&
+            <Pagination
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+              totalPages={totalPages}
+            />}
         </>
       )}
     </div>

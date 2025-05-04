@@ -1,78 +1,85 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useLoginForm } from '../hooks/useLoginForm';
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const { login, error, loading, isAuthenticated, clearError } = useAuth();
+
+  const {
+    email,
+    setEmail,
+    password,
+    setPassword,
+    handleSubmit,
+    errors,
+    mainError,
+    loading,
+    isAuthenticated,
+    clearError,
+  } = useLoginForm();
+
   const navigate = useNavigate();
 
   useEffect(() => {
     if (isAuthenticated) {
+      clearError();
       navigate('/');
     }
-    
-    clearError();
-    return () => clearError();
   }, [isAuthenticated, navigate, clearError]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    await login(email, password);
-  };
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-gray-900">
       <div className="bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md">
         <h2 className="text-3xl font-bold text-white mb-6 text-center">Login</h2>
-        
-        {error && (
-          <div className="bg-red-500 text-white p-3 rounded-lg mb-4">
-            {error}
+
+        {mainError && (
+          <div className="bg-red-800 text-white p-3 rounded-lg mb-4">
+            {mainError}
           </div>
         )}
-        
+
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-300 mb-2" htmlFor="email">
-              Email
+            <label className={`block ${errors.email ? 'text-red-500' : 'text-gray-300'} mb-2`} htmlFor="email">
+              {errors.email ? errors.email : `Email`}
             </label>
             <input
               id="email"
-              type="email"
+              type="text"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                if (mainError) clearError();
+              }}
               className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              required
             />
           </div>
-          
+
           <div className="mb-6">
-            <label className="block text-gray-300 mb-2" htmlFor="password">
-              Password
+            <label className={`block ${errors.password ? 'text-red-500' : 'text-gray-300'} mb-2`} htmlFor="password">
+              {errors.password ? errors.password : `Password`}
             </label>
             <input
               id="password"
               type="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (mainError) clearError();
+              }}
               className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-              required
             />
           </div>
-          
+
           <button
             type="submit"
             disabled={loading}
-            className={`w-full bg-yellow-500 text-black font-bold py-2 px-4 rounded-lg hover:bg-yellow-400 transition duration-300 ${
-              loading ? 'opacity-70 cursor-not-allowed' : ''
-            }`}
+            className={`w-full bg-yellow-500 text-black font-bold py-2 px-4 rounded-lg hover:bg-yellow-400 transition duration-300 cursor-pointer ${loading ? 'opacity-70 cursor-not-allowed' : ''
+              }`}
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-        
+
         <div className="mt-6 text-center">
           <p className="text-gray-400">
             Don't have an account?{' '}

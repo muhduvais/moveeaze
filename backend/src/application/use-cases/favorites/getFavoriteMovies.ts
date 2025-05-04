@@ -9,7 +9,7 @@ export class GetFavoriteMovies implements IGetFavoriteMovies {
     @inject("IMovieRepository") private movieRepository: IMovieRepository
   ) {}
 
-  async execute(userId: string): Promise<IMovieDetails[]> {
-    return await this.movieRepository.getFavoriteMovies(userId);
+  async execute(userId: string, skip: number, limit: number): Promise<IMovieDetails[]> {
+    return await this.movieRepository.getFavoriteMovies(userId, skip, limit);
   }
 }
