@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { IFavoritesResponse } from '../interfaces/movieInterfaces';
 import { movieService } from '../services/movie-service';
 import { toast } from 'sonner';
 import { useAuth } from '../contexts/AuthContext';
