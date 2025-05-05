@@ -1,10 +1,39 @@
+import { useState } from 'react';
 import Ratings from '../components/Ratings';
 import { IMovieDetails } from '../domain/models/IMovieDetails';
 import { useMovie } from "../hooks/useMovie";
+import loadingIcon from '../assets/loading.svg'
 
-const MovieCard: React.FC<{ result: IMovieDetails }> = ({ result }) => {
+const MovieCard: React.FC<{ result: IMovieDetails, isFavorite: boolean }> = ({ result, isFavorite }) => {
 
-    const { isFavorite, addToFavorites, removeFromFavorites } = useMovie();
+    const [isMovieFavorite, setIsMovieFavorite] = useState<boolean>(isFavorite);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const { addToFavorites, removeFromFavorites } = useMovie();
+
+    const handleRemoveFromFavorites = async (imdbID: string) => {
+        setIsLoading(true);
+        try {
+            await removeFromFavorites(imdbID);
+            setIsMovieFavorite(false);
+        } catch (error) {
+            console.log('Error removing favorite!', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    const handleAddToFavorites = async (imdbID: string) => {
+        setIsLoading(true);
+        try {
+            await addToFavorites(imdbID);
+            setIsMovieFavorite(true);
+        } catch (error) {
+            console.log('Error adding favorite!', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     return (
         <>
@@ -93,28 +122,31 @@ const MovieCard: React.FC<{ result: IMovieDetails }> = ({ result }) => {
                                     )}
                                 </div>
 
-                                {isFavorite && <button
-                                    onClick={() => removeFromFavorites(result.imdbID)}
+                                {isMovieFavorite && <button
+                                    onClick={() => handleRemoveFromFavorites(result.imdbID)}
                                     className="flex items-center justify-center px-4 py-2 bg-gray-900 text-sm border-2 border-red-900
                                             text-white font-medium rounded-lg hover:border-red-800 cursor-pointer transition duration-300 
                                             shadow-lg hover:shadow-xl w-full md:w-auto"
                                 >
-                                    <svg className="w-5 h-5 mr-2" fill="red" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    {isLoading && <img src={loadingIcon} alt="Loading..." className="w-4 h-4 animate-spin mr-2" />}
+                                    {!isLoading && <svg className="w-5 h-5 mr-2" fill="red" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                         <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"></path>
                                     </svg>
-                                    Added to Favorites
+                                    }
+                                    {isLoading ? 'Removing...' : 'Added to Favorites'}
                                 </button>}
 
-                                {!isFavorite && <button
-                                    onClick={() => addToFavorites(result.imdbID)}
+                                {!isMovieFavorite && <button
+                                    onClick={() => handleAddToFavorites(result.imdbID)}
                                     className="flex items-center justify-center px-4 py-2 bg-gray-900 text-sm border-2 border-gray-700
                                             text-white font-medium rounded-lg hover:border-blue-900 cursor-pointer transition duration-300 
                                             shadow-lg hover:shadow-xl w-full md:w-auto"
                                 >
-                                    <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    {isLoading && <img src={loadingIcon} alt="Loading..." className="w-4 h-4 animate-spin mr-2" />}
+                                    {!isLoading && <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                                         <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"></path>
-                                    </svg>
-                                    Add to Favorites
+                                    </svg>}
+                                    {isLoading ? 'Adding...' : 'Add to Favorites'}
                                 </button>}
                             </div>
                         </div>

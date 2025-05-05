@@ -27,8 +27,14 @@ const Login: React.FC = () => {
   }, [isAuthenticated, navigate, clearError]);
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-900">
-      <div className="bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gray-900">
+      <div className="flex items-center">
+        <Link to="/" className="text-xl font-bold text-yellow-500">
+          Move<span className='text-gray-300'>Eaze</span>
+        </Link>
+      </div>
+
+      <div className="bg-gray-800 p-8 rounded-xl shadow-lg w-full max-w-md mt-10">
         <h2 className="text-3xl font-bold text-white mb-6 text-center">Login</h2>
 
         {mainError && (

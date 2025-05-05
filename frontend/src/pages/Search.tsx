@@ -15,6 +15,7 @@ const Search = () => {
         query,
         setQuery,
         result,
+        isFavorite,
         debouncedQuery,
         loading,
     } = useMovie();
@@ -57,7 +58,10 @@ const Search = () => {
                 </div>
             )}
 
-            {!loading && result && <MovieCard result={result} />}
+            {!loading && result && <MovieCard
+                result={result}
+                isFavorite={isFavorite}
+            />}
         </>
     );
 };
