@@ -18,11 +18,11 @@ export const useFavorite = () => {
 
         setLoading(true);
         try {
-            const { data } = await movieService.getFavourites(page);
-            setFavorites(data.favorites);
-            setTotalPages(data.totalPages);
-            setCurrentPage(data.currentPage);
-            setTotalItems(data.totalItems);
+            const response = await movieService.getFavourites(page);
+            setFavorites(response.favorites);
+            setTotalPages(response.totalPages);
+            setCurrentPage(response.currentPage);
+            setTotalItems(response.totalItems);
         } catch (err) {
             console.error('Error fetching favorites:', err);
             toast.error('Failed to load favorites');

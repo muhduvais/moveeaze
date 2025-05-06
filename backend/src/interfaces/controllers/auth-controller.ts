@@ -34,6 +34,6 @@ export class AuthController implements IAuthController {
 
     async getCurrentUser(req: Request, res: Response): Promise<void> {
         const result = await this.getCurrentUserUseCase.execute(req.user!);
-        res.status(200).json({ status: 'success', data: { user: result } });
+        res.status(200).json({ status: 'success', user: result });
     }
 }

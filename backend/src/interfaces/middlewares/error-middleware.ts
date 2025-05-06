@@ -32,7 +32,7 @@ const sendErrorProd = (err: AppError, res: Response) => {
     }
 };
 
-export const handleError = (err: any, req: Request, res: Response, next: NextFunction) => {
+export const handleError = (err: AppError, req: Request, res: Response, next: NextFunction) => {
     err.statusCode = err.statusCode || 500;
     err.status = err.status || 'error';
 

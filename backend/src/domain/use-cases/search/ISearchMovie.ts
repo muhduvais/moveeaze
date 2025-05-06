@@ -1,5 +1,5 @@
-import { IMovieDetails } from "../../entities/IMovie";
+import { IMovieSearchResponse } from "../../apiResponses/IMovieSearchResponse";
 
 export interface ISearchMovie {
-    execute(title: string, userId: string): Promise<IMovieDetails | []>;
+    execute(title: string, userId: string): Promise<IMovieSearchResponse>;
 }

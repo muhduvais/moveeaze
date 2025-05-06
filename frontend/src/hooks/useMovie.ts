@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useDebounce } from 'use-debounce';
-import { IMovie } from '../interfaces/movieInterfaces';
 import { movieService } from '../services/movie-service';
 import { toast } from 'sonner';
+import { IMovieDetails } from '../domain/models/IMovieDetails';
 
 export const useMovie = () => {
     const [query, setQuery] = useState<string>('');
     const [debouncedQuery] = useDebounce(query, 500);
     const [loading, setLoading] = useState<boolean>(false);
-    const [result, setResult] = useState<IMovie | null>(null);
+    const [result, setResult] = useState<IMovieDetails | null>(null);
     const [isFavorite, setIsFavorite] = useState<boolean>(false);
 
     useEffect(() => {
@@ -20,9 +20,8 @@ export const useMovie = () => {
 
             setLoading(true);
             try {
-                const response = await movieService.searchMovie(debouncedQuery);
-                const { movieDetails, isFavorite } = response.data;
-
+                const { movieDetails, isFavorite } = await movieService.searchMovie(debouncedQuery);
+                
                 if (movieDetails) {
                     setResult(movieDetails);
                     setIsFavorite(isFavorite);

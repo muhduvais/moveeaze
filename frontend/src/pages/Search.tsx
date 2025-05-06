@@ -22,7 +22,7 @@ const Search = () => {
 
     return (
         <>
-            <div className="relative">
+            <div className="relative mx-auto max-w-6xl">
                 <input
                     type="text"
                     value={query}

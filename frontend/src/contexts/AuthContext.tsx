@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { loginApi, signupApi, getCurrentUserApi } from '../services/auth-service';
+import { authService } from '../services/auth-service';
 import axiosInstance from '../infrastructure/apiClient/axiosInstance';
 
 
@@ -58,9 +58,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const fetchUserData = async () => {
     try {
-      const response = await getCurrentUserApi();
-      const responseData: any = response.data;
-      setUser(responseData.data.user);
+      const response = await authService.getCurrentUser();
+      setUser(response.user);
     } catch (err) {
       console.error('Error fetching user data:', err);
       logout();
@@ -72,9 +71,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
     
     try {
-      const response: any = await loginApi(email, password);
+      const response = await authService.login(email, password);
       
-      const { token, user } = response.data;
+      const { token, user } = response;
       
       localStorage.setItem('token', token);
       setToken(token);
@@ -93,9 +92,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setError(null);
     
     try {
-      const response: any = await signupApi(name, email, password);
+      const response = await authService.signup(name, email, password);
       
-      const { token, user } = response.data;
+      const { token, user } = response;
       
       localStorage.setItem('token', token);
       setToken(token);

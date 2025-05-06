@@ -3,6 +3,7 @@ import { ISignupUser } from '../../../domain/use-cases/auth/ISignupUser';
 import User from '../../../infrastructure/database/models/user-model';
 import { AppError } from '../../../shared/errors/appError';
 import { IJwtService } from '../../../domain/services/IJwtService';
+import { IUser } from '../../../domain/entities/IUser';
 
 @injectable()
 export class SignupUser implements ISignupUser {
@@ -10,7 +11,7 @@ export class SignupUser implements ISignupUser {
         @inject("IJwtService") private jwtService: IJwtService
     ) { }
 
-    async execute({ name, email, password }: { name: string; email: string; password: string }): Promise<{ token: string; user: any }> {
+    async execute({ name, email, password }: { name: string; email: string; password: string }): Promise<{ token: string; user: IUser }> {
         const existingUser = await User.findOne({ email });
         if (existingUser) throw new AppError('Email already in use', 400);
 

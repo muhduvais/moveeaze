@@ -1,10 +1,16 @@
-import axiosInstance from "../infrastructure/apiClient/axiosInstance";
+import { getCurrentUser, login, signup } from "../infrastructure/api/auth-api";
+import { IAuthService } from "../domain/models/service/IAuthService";
+import { LoginResponse, SignupResponse, CurrentUserResponse } from "../interfaces/apiResponses/authResponse";
 
-export const loginApi = (email: string, password: string) =>
-  axiosInstance.post('/api/auth/login', { email, password });
+export const authService: IAuthService = {
 
-export const signupApi = (name: string, email: string, password: string) =>
-  axiosInstance.post('/api/auth/signup', { name, email, password });
-
-export const getCurrentUserApi = () =>
-  axiosInstance.get('/api/auth/me');
+  async login(email: string, password: string): Promise<LoginResponse> {
+    return await login(email, password);
+  },
+  async signup(name: string, email: string, password: string): Promise<SignupResponse> {
+    return await signup(name, email, password);
+  },
+  async getCurrentUser(): Promise<CurrentUserResponse> {
+    return await getCurrentUser();
+  },
+};

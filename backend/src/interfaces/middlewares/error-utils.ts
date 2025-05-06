@@ -1,18 +1,19 @@
+import mongoose from "mongoose";
 import { AppError } from "../../shared/errors/appError";
 
-export const handleCastErrorDB = (err: any) => {
+export const handleCastErrorDB = (err: mongoose.Error.CastError) => {
     const message = `Invalid ${err.path}: ${err.value}`;
     return new AppError(message, 400);
 };
 
-export const handleDuplicateFieldsDB = (err: any) => {
+export const handleDuplicateFieldsDB = (err: mongoose.Error) => {
     const value = err.message.match(/(["'])(\\?.)*?\1/)[0];
     const message = `Duplicate field value: ${value}. Please use another value.`;
     return new AppError(message, 400);
 };
 
-export const handleValidationErrorDB = (err: any) => {
-    const errors = Object.values(err.errors).map((el: any) => el.message);
+export const handleValidationErrorDB = (err: mongoose.Error.ValidationError) => {
+    const errors = Object.values(err.errors).map((el) => el.message);
     const message = `Invalid input data. ${errors.join('. ')}`;
     return new AppError(message, 400);
 };

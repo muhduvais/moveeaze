@@ -1,0 +1,13 @@
+import { IMovieDetails } from "../IMovieDetails";
+
+export interface IMovieSearchResponse {
+    movieDetails: IMovieDetails;
+    isFavorite: boolean;
+}
+
+export interface IFavoritesResponse {
+    favorites: IMovieDetails[];
+    totalPages: number;
+    currentPage: number;
+    totalItems: number;
+}

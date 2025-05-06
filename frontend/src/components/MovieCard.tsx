@@ -40,18 +40,18 @@ const MovieCard: React.FC<{ result: IMovieDetails, isFavorite: boolean }> = ({ r
             {result &&
                 <div className="mt-8">
                     <div
-                        className="bg-gray-800 rounded-xl overflow-hidden shadow-xl mb-8"
+                        className="bg-gray-800 mx-auto max-w-6xl rounded-xl overflow-hidden shadow-xl mb-8"
                     >
                         <div className="lg:flex">
-                            <div className="lg:w-1/3 flex justify-center lg:justify-start">
+                            <div className="flex justify-center lg:justify-start">
                                 {result.Poster && result.Poster !== "N/A" ? (
                                     <img
                                         src={result.Poster}
                                         alt={`${result.Title} poster`}
-                                        className="object-cover h-96 w-full lg:w-auto lg:h-auto rounded-t-xl lg:rounded-none"
+                                        className="object-cover w-full lg:w-80 lg:h-auto rounded-t-xl lg:rounded-none"
                                     />
                                 ) : (
-                                    <div className="flex items-center justify-center h-96 w-full bg-gray-700 text-gray-400">
+                                    <div className="flex items-center justify-center w-full lg:w-80 lg:h-auto bg-gray-700 text-gray-400">
                                         No poster available
                                     </div>
                                 )}
