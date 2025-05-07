@@ -123,7 +123,7 @@ const Signup: React.FC = () => {
                         <div className="relative">
                             <input
                                 id="confirmPassword"
-                                type={showPassword ? 'text' : 'password'}
+                                type={showConfirmPassword ? 'text' : 'password'}
                                 value={confirmPassword}
                                 onChange={(e) => {
                                     setConfirmPassword(e.target.value);
