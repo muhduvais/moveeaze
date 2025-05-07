@@ -12,7 +12,7 @@ export const useLoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState(initialErrors)
-  const { login, error: mainError, loading, isAuthenticated, clearError } = useAuth();
+  const { login, loading, isAuthenticated } = useAuth();
 
   const validateForm = () => {
     const signupErrors = validateLogin(email, password);
@@ -33,9 +33,7 @@ export const useLoginForm = () => {
     setPassword,
     handleSubmit,
     errors,
-    mainError,
     loading,
     isAuthenticated,
-    clearError,
   };
 };

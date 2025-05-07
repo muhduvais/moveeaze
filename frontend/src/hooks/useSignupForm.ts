@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { validateSignup } from '../utils/validators/signup-validator';
 
@@ -17,15 +16,7 @@ export const useSignupForm = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [errors, setErrors] = useState(initialErrors)
 
-    const { signup, error: mainError, loading, isAuthenticated, clearError } = useAuth();
-    const navigate = useNavigate();
-
-    useEffect(() => {
-        if (isAuthenticated) {
-            clearError();
-            navigate('/');
-        }
-    }, [isAuthenticated, navigate, clearError]);
+    const { signup, loading, isAuthenticated } = useAuth();
 
     const validateForm = () => {
         const signupErrors = validateSignup(name, email, password, confirmPassword);
@@ -45,10 +36,8 @@ export const useSignupForm = () => {
         password, setPassword,
         confirmPassword, setConfirmPassword,
         errors,
-        mainError,
         loading,
         isAuthenticated,
-        clearError,
         handleSubmit
     };
 };

@@ -15,6 +15,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   loading: boolean;
   error: string | null;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
   login: (email: string, password: string) => Promise<void>;
   signup: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -126,6 +127,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     isAuthenticated,
     loading,
     error,
+    setError,
     login,
     signup,
     logout,

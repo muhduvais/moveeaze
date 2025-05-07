@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSignupForm } from '../hooks/useSignupForm';
 import Login_background from '../assets/Login_background.jpg'
 import { Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
 const Signup: React.FC = () => {
 
@@ -15,14 +16,18 @@ const Signup: React.FC = () => {
         password, setPassword,
         confirmPassword, setConfirmPassword,
         errors,
-        mainError,
         loading,
         isAuthenticated,
-        clearError,
         handleSubmit
     } = useSignupForm();
 
     const navigate = useNavigate();
+
+    const { error: mainError, clearError } = useAuth();
+
+    useEffect(() => {
+        clearError();
+    }, []);
 
     useEffect(() => {
         if (isAuthenticated) {

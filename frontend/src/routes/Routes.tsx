@@ -13,7 +13,7 @@ import ProtectedRoute from '../components/ProtectedRoute';
 const AppRoutes: React.FC = () => {
   return (
     <>
-      <Toaster position="top-right" />
+      <Toaster position="top-center" />
       <Routes>
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
