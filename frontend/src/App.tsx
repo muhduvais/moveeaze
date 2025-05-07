@@ -3,7 +3,6 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import { TabProvider } from './contexts/TabContext';
 import AppRoutes from './routes/Routes';
-import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const App: React.FC = () => {
   return (
@@ -11,7 +10,6 @@ const App: React.FC = () => {
       <AuthProvider>
         <TabProvider>
           <div className="min-h-screen bg-gray-900 text-white">
-            <SpeedInsights />
             <AppRoutes />
           </div>
         </TabProvider>
