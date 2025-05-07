@@ -9,8 +9,6 @@ export const validateLogin = (email: string, password: string) => {
 
     if (!password.trim()) {
         errors.password = 'Enter the password!';
-    } else if (password.length < 6) {
-        errors.password = 'Password must be at least 6 characters!';
     }
     
     return errors;

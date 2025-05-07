@@ -1,9 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLoginForm } from '../hooks/useLoginForm';
 import Login_background from '../assets/Login_background.jpg'
+import { Eye, EyeOff } from 'lucide-react';
 
 const Login: React.FC = () => {
+
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
   const {
     email,
@@ -74,16 +78,26 @@ const Login: React.FC = () => {
             <label className={`block text-sm lg:text-[16px] ${errors.password ? 'text-red-500' : 'text-gray-300'} mb-2`} htmlFor="password">
               {errors.password ? errors.password : `Password`}
             </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (mainError) clearError();
-              }}
-              className="w-full px-3 py-2 lg:px-4 lg:py-2 bg-gray-700 text-white rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
-            />
+            <div className="relative">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (mainError) clearError();
+                }}
+                className="w-full px-3 py-2 lg:px-4 lg:py-2 pr-10 bg-gray-700 text-white rounded-md lg:rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-white"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
           </div>
 
           <button
