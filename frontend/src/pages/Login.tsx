@@ -7,7 +7,6 @@ import { Eye, EyeOff } from 'lucide-react';
 const Login: React.FC = () => {
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
 
   const {
     email,
