@@ -15,7 +15,6 @@ const AppRoutes: React.FC = () => {
     <>
       <Toaster position="top-center" />
       <Routes>
-        {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
 
